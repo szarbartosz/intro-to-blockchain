@@ -20,16 +20,14 @@ class Alice:
                 - bytes(string, 'utf-8')
                 - asymmetric_encrypt
         """
-        raise NotImplementedError()
-
+        return asymmetric_encrypt(self.bob.get_public_key(), bytes(message, 'utf-8'))
 
 class Bob:
     def __init__(self):
         """
         TODO: wygeneruj parę klucz publiczny, prywatny za pomocą metody generate_key_pair z simple_cryptography.
         """
-        # self._public_key, self._private_key = ?
-        raise NotImplementedError()
+        self._public_key, self._private_key = generate_key_pair()
 
     def get_public_key(self):
         return self._public_key
@@ -42,4 +40,4 @@ class Bob:
                 - asymmetric_decrypt
                 - string.decode("utf-8")
         """
-        raise NotImplementedError()
+        return asymmetric_decrypt(self._private_key, encrypted_message).decode("utf-8")
