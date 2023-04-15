@@ -55,7 +55,7 @@ class TransactionRegistry:
             Jeśli w liście transakcji istnieje transakcja z podanym tx_hash, zwróć ją,
             w przeciwnym przypadku zwróć None.
         """
-        raise NotImplementedError()
+        return next(filter(lambda transaction: transaction.hash == tx_hash, self.transactions), None)
 
     def is_transaction_available(self, tx_hash: bytes) -> bool:
         """
@@ -67,7 +67,9 @@ class TransactionRegistry:
                 False.
             3. Jeśli w poprzednich krokach nic nie zwrócono - transakcja jest dostępna, zwróć True.
         """
-        raise NotImplementedError()
+        if self.get_transaction(tx_hash) is not None:
+            return next(filter(lambda transaction: transaction.previous_tx_hash == tx_hash, self.transactions), None) is None
+        return False
 
     def verify_transaction_signature(self, transaction: Transaction) -> bool:
         """
@@ -78,7 +80,9 @@ class TransactionRegistry:
                 Wykorzystaj do tego metodę verify_signature z simple_cryptography.
             Przypomnienie: podpisywany jest hash transakcji.
         """
-        raise NotImplementedError()
+        if self.get_transaction(transaction.previous_tx_hash) is not None:
+            return verify_signature(self.get_transaction(transaction.previous_tx_hash).recipient, transaction.signature, transaction.hash)
+        return False
 
     def add_transaction(self, transaction: Transaction) -> bool:
         """
@@ -89,4 +93,7 @@ class TransactionRegistry:
             Wykorzystaj do tego dwie metody powyżej.
             Zwróć True jeśli dodanie transakcji przebiegło pomyślnie, False w przeciwnym wypadku.
         """
-        raise NotImplementedError()
+        if self.is_transaction_available(transaction.previous_tx_hash) and self.verify_transaction_signature(transaction):
+            self.transactions.append(transaction)
+            return True
+        return False

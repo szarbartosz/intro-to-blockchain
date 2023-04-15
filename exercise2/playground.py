@@ -19,21 +19,26 @@ initial_transactions = [
 
 registry = TransactionRegistry(initial_transactions)
 
+transactionCount = 0
 
-def print_balances():
+def print_balances(count):
+    print(f"Transaction no: {count}")
     print(f"Alice's balance: {alice.get_balance(registry)}")
-    print(f"Bob's balance: {bob.get_balance(registry)}")
+    print(f"Bob's balance: {bob.get_balance(registry)}\n")
 
-print_balances()
-
-alice.transfer(registry, bob.public_key)
-
-print_balances()
+print_balances(transactionCount)
 
 alice.transfer(registry, bob.public_key)
+transactionCount += 1
 
-print_balances()
+print_balances(transactionCount)
+
+alice.transfer(registry, bob.public_key)
+transactionCount += 1
+
+print_balances(transactionCount)
 
 bob.transfer(registry, alice.public_key)
+transactionCount += 1
 
-print_balances()
+print_balances(transactionCount)
