@@ -26,7 +26,10 @@ class Block:
         TODO: Stwórz blok z podanych argumentów.
             Aby pobrać aktualny czas, użyj funkcji time(), a następnie zrzutuj ją na int'a ( int(time()) ).
         """
-        raise NotImplementedError()
+        self.prev_block_hash = prev_block_hash
+        self.timestamp = int(time())
+        self.nonce = nonce
+        self.transactions = transactions
 
     def hash(self) -> bytes:
         """
@@ -41,4 +44,7 @@ class Block:
                  all_tx_hash = hash(all_tx_hash + current_tx_hash)
             Możesz założyć, że zarówno timestamp jak i nonce zajmują maksymalnie 32 bajty.
         """
-        raise NotImplementedError()
+        all_tx_hash = b'\x00'
+        for tx in self.transactions:
+            all_tx_hash = hash(all_tx_hash + tx.hash)
+        return hash(self.prev_block_hash + int.to_bytes(self.timestamp, 32, 'big') + int.to_bytes(self.nonce, 32, 'big') + all_tx_hash)
